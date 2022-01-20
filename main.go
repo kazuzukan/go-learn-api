@@ -28,6 +28,7 @@ func main() {
 	api := router.Group("api/v1")
 
 	api.POST("/users", userHandler.RegisterUser)
+	api.POST("/login", userHandler.Login)
 	router.Run()
 
 	// fmt.Println("Connection to database success")
