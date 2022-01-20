@@ -22,7 +22,6 @@ func main() {
 	userRepository := user.NewRepository(db)
 	userService := user.NewServices(userRepository)
 	userHandler := handler.NewUserHandler(userService)
-	// fmt.Println(userHandler)
 
 	router := gin.Default()
 	api := router.Group("api/v1")
@@ -30,6 +29,7 @@ func main() {
 	api.POST("/users", userHandler.RegisterUser)
 	api.POST("/login", userHandler.Login)
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
+	api.POST("/avatars", userHandler.UploadAvatar)
 	router.Run()
 
 	// fmt.Println("Connection to database success")
