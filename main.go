@@ -47,6 +47,8 @@ func main() {
 	campaignHandler := handler.NewCampaignHanlder(campaignService)
 
 	router := gin.Default()
+	// param pertama itu yang mau dituju, yang kedua nama foldernya
+	router.Static("/images", "./images")
 	api := router.Group("api/v1")
 
 	api.GET("/campaigns", campaignHandler.GetCampaings)
