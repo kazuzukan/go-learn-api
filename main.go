@@ -51,7 +51,8 @@ func main() {
 	router.Static("/images", "./images")
 	api := router.Group("api/v1")
 
-	api.GET("/campaigns", campaignHandler.GetCampaings)
+	api.GET("/campaigns", campaignHandler.GetCampaigns)
+	api.GET("/campaigns/:id", campaignHandler.GetCampaign)
 
 	api.POST("/users", userHandler.RegisterUser)
 	api.POST("/login", userHandler.Login)
