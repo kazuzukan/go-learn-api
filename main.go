@@ -2,6 +2,7 @@ package main
 
 import (
 	"bwa-project/auth"
+	"bwa-project/campaign"
 	"bwa-project/handler"
 	"bwa-project/helper"
 	"bwa-project/user"
@@ -32,18 +33,29 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
+	// repository
 	userRepository := user.NewRepository(db)
+	campaignRepository := campaign.NewRepository(db)
+
+	// service
 	userService := user.NewServices(userRepository)
 	authService := auth.NewServices()
+	campaignService := campaign.NewServices(campaignRepository)
+
+	// handler
 	userHandler := handler.NewUserHandler(userService, authService)
+	campaignHandler := handler.NewCampaignHanlder(campaignService)
 
 	router := gin.Default()
 	api := router.Group("api/v1")
+
+	api.GET("/campaigns", campaignHandler.GetCampaings)
 
 	api.POST("/users", userHandler.RegisterUser)
 	api.POST("/login", userHandler.Login)
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
+
 	router.Run()
 
 	// fmt.Println("Connection to database success")
