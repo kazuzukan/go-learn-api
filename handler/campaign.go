@@ -4,6 +4,7 @@ import (
 	"bwa-project/campaign"
 	"bwa-project/helper"
 	"bwa-project/user"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -27,6 +28,8 @@ func (h *campaignHandler) GetCampaigns(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
+
+	fmt.Println(len(campaigns))
 
 	formatter := campaign.FormatCampaigns(campaigns)
 	response := helper.APIResponse("List of campaings", http.StatusOK, "success", formatter)
@@ -82,6 +85,44 @@ func (h *campaignHandler) CreateCampaign(c *gin.Context) {
 	}
 
 	formatter := campaign.FormatCampaign(newCampaign)
+	response := helper.APIResponse("Campaign created", http.StatusOK, "success", formatter)
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *campaignHandler) UpdateCampaign(c *gin.Context) {
+	var inputId campaign.GetCampaignDetailInput
+	var inputData campaign.CreateCampaignInput
+
+	err := c.ShouldBindUri(&inputId)
+	if err != nil {
+		response := helper.APIResponse("Failed to update a campaign", http.StatusBadRequest, "failed", nil)
+		c.JSON(http.StatusOK, response)
+		return
+	}
+
+	err = c.ShouldBindJSON(&inputData)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+		// fmt.Println(errorMessage)
+
+		response := helper.APIResponse("Failed to update a campaign", http.StatusUnprocessableEntity, "failed", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	// JWT
+	currentUser := c.MustGet("currentUser").(user.User)
+	inputData.User = currentUser
+
+	updatedCampaign, err := h.campaignService.UpdateCampaign(inputData, inputId)
+	if err != nil {
+		response := helper.APIResponse("Failed to updated a campaign", http.StatusBadRequest, "failed", nil)
+		c.JSON(http.StatusOK, response)
+		return
+	}
+
+	formatter := campaign.FormatCampaign(updatedCampaign)
 	response := helper.APIResponse("Campaign created", http.StatusOK, "success", formatter)
 	c.JSON(http.StatusOK, response)
 }

@@ -9,6 +9,7 @@ type CampaignFormatter struct {
 	UserId           int         `json:"user_id"`
 	Name             string      `json:"name"`
 	ShortDescription string      `json:"short_description"`
+	Description      string      `json:"description"`
 	ImageUrl         interface{} `json:"image_url"`
 	GoalAmount       int         `json:"goal_amount"`
 	CurrentAmount    int         `json:"current_amount"`
@@ -26,6 +27,7 @@ func FormatCampaign(campaign Campaign) CampaignFormatter {
 		UserId:           campaign.UserId,
 		Name:             campaign.Name,
 		ShortDescription: campaign.ShortDescription,
+		Description:      campaign.Description,
 		ImageUrl:         imageUrl,
 		GoalAmount:       campaign.GoalAmount,
 		CurrentAmount:    campaign.CurrentAmount,
@@ -46,18 +48,17 @@ func FormatCampaigns(campaigns []Campaign) []CampaignFormatter {
 }
 
 type CampaignDetailFormatter struct {
-	Id               int    `json:"id"`
-	Name             string `json:"name"`
-	ShortDescription string `json:"short_description"`
-	Description      string `json:"description"`
-	// mageUrl         interface{}               `json:"image_url"`
-	GoalAmount    int                       `json:"goal_amount"`
-	CurrentAmount int                       `json:"current_amount"`
-	Slug          string                    `json:"slug"`
-	UserId        int                       `json:"user_id"`
-	Perks         []string                  `json:"perks"`
-	User          CampaignUserFormatter     `json:"user"`
-	Images        []CampaignImagesFormatter `json:"images"`
+	Id               int                       `json:"id"`
+	Name             string                    `json:"name"`
+	ShortDescription string                    `json:"short_description"`
+	Description      string                    `json:"description"`
+	GoalAmount       int                       `json:"goal_amount"`
+	CurrentAmount    int                       `json:"current_amount"`
+	Slug             string                    `json:"slug"`
+	UserId           int                       `json:"user_id"`
+	Perks            []string                  `json:"perks"`
+	User             CampaignUserFormatter     `json:"user"`
+	Images           []CampaignImagesFormatter `json:"images"`
 }
 
 type CampaignUserFormatter struct {
