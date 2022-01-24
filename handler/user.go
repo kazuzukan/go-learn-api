@@ -133,12 +133,14 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 		response := helper.APIResponse("Failed to upload avatar image", http.StatusBadRequest, "failed", data)
 
 		c.JSON(http.StatusBadRequest, response)
+		return
 	}
 
 	// JWT
 	currentUser := c.MustGet("currentUser").(user.User)
 	userId := currentUser.ID
 
+	// save image
 	path := fmt.Sprintf("images/%d-%s", userId, file.Filename)
 	err = c.SaveUploadedFile(file, path)
 	if err != nil {
@@ -146,6 +148,7 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 		response := helper.APIResponse("Failed to upload avatar image", http.StatusBadRequest, "failed", data)
 
 		c.JSON(http.StatusBadRequest, response)
+		return
 	}
 
 	_, err = h.userService.SaveAvatar(userId, path)
@@ -154,6 +157,7 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 		response := helper.APIResponse("Failed to upload avatar image", http.StatusBadRequest, "failed", data)
 
 		c.JSON(http.StatusBadRequest, response)
+		return
 	}
 
 	data := gin.H{"is_uploaded": true}
