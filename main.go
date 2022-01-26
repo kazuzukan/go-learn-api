@@ -5,6 +5,7 @@ import (
 	"bwa-project/campaign"
 	"bwa-project/handler"
 	"bwa-project/helper"
+	"bwa-project/transaction"
 	"bwa-project/user"
 	"fmt"
 	"log"
@@ -36,15 +37,18 @@ func main() {
 	// repository
 	userRepository := user.NewRepository(db)
 	campaignRepository := campaign.NewRepository(db)
+	transactionRepository := transaction.NewRepository(db)
 
 	// service
 	userService := user.NewServices(userRepository)
 	authService := auth.NewServices()
 	campaignService := campaign.NewServices(campaignRepository)
+	transctionService := transaction.NewServices(transactionRepository, campaignRepository)
 
 	// handler
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHanlder(campaignService)
+	transctionHandler := handler.NewtransctionHandler(transctionService)
 
 	router := gin.Default()
 	// param pertama itu yang mau dituju, yang kedua nama foldernya
@@ -61,6 +65,8 @@ func main() {
 	api.POST("/campaigns", authMiddleware(authService, userService), campaignHandler.CreateCampaign)
 	api.PUT("/campaigns/:id", authMiddleware(authService, userService), campaignHandler.UpdateCampaign)
 	api.POST("/campaign-images", authMiddleware(authService, userService), campaignHandler.UploadCampaignImage)
+
+	api.GET("/campaigns/:id/transactions", authMiddleware(authService, userService), transctionHandler.GetCampaignTransctions)
 
 	router.Run()
 
