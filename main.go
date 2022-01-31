@@ -5,6 +5,7 @@ import (
 	"bwa-project/campaign"
 	"bwa-project/handler"
 	"bwa-project/helper"
+	"bwa-project/payment"
 	"bwa-project/transaction"
 	"bwa-project/user"
 	"fmt"
@@ -14,6 +15,7 @@ import (
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
@@ -43,7 +45,8 @@ func main() {
 	userService := user.NewServices(userRepository)
 	authService := auth.NewServices()
 	campaignService := campaign.NewServices(campaignRepository)
-	transctionService := transaction.NewServices(transactionRepository, campaignRepository)
+	paymentService := payment.NewService(campaignRepository)
+	transctionService := transaction.NewServices(transactionRepository, campaignRepository, paymentService)
 
 	// handler
 	userHandler := handler.NewUserHandler(userService, authService)
@@ -51,6 +54,7 @@ func main() {
 	transctionHandler := handler.NewtransctionHandler(transctionService)
 
 	router := gin.Default()
+	router.Use(cors.Default())
 	// param pertama itu yang mau dituju, yang kedua nama foldernya
 	router.Static("/images", "./images")
 	api := router.Group("api/v1")
@@ -59,6 +63,7 @@ func main() {
 	api.POST("/login", userHandler.Login)
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
+	api.GET("/user/fetch", authMiddleware(authService, userService), userHandler.FetchUser)
 
 	api.GET("/campaigns", campaignHandler.GetCampaigns)
 	api.GET("/campaigns/:id", campaignHandler.GetCampaign)
@@ -68,6 +73,8 @@ func main() {
 
 	api.GET("/campaigns/:id/transactions", authMiddleware(authService, userService), transctionHandler.GetCampaignTransctions)
 	api.GET("/transactions", authMiddleware(authService, userService), transctionHandler.GetUserTransactions)
+	api.POST("/transactions", authMiddleware(authService, userService), transctionHandler.CreateTransaction)
+	api.POST("/transactions/noitification", transctionHandler.GetNotification)
 
 	router.Run()
 
