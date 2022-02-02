@@ -29,8 +29,6 @@ func (h *campaignHandler) GetCampaigns(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(len(campaigns))
-
 	formatter := campaign.FormatCampaigns(campaigns)
 	response := helper.APIResponse("List of campaings", http.StatusOK, "success", formatter)
 	c.JSON(http.StatusOK, response)
@@ -66,7 +64,6 @@ func (h *campaignHandler) CreateCampaign(c *gin.Context) {
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}
-		// fmt.Println(errorMessage)
 
 		response := helper.APIResponse("Failed to create campaign", http.StatusUnprocessableEntity, "failed", errorMessage)
 		c.JSON(http.StatusUnprocessableEntity, response)
@@ -104,7 +101,6 @@ func (h *campaignHandler) UpdateCampaign(c *gin.Context) {
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}
-		// fmt.Println(errorMessage)
 
 		response := helper.APIResponse("Failed to update a campaign", http.StatusUnprocessableEntity, "failed", errorMessage)
 		c.JSON(http.StatusUnprocessableEntity, response)
@@ -135,7 +131,6 @@ func (h *campaignHandler) UploadCampaignImage(c *gin.Context) {
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}
-		// fmt.Println(errorMessage)
 
 		response := helper.APIResponse("Failed to create campaign image", http.StatusUnprocessableEntity, "failed", errorMessage)
 		c.JSON(http.StatusUnprocessableEntity, response)

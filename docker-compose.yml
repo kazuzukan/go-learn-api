@@ -1,0 +1,24 @@
+version: '3'
+services:
+  db: 
+    image: mysql/mysql-server:latest
+    container_name: campaign_go_db_2
+    ports:
+      - "3306:3306"
+    environment:
+      - "MYSQL_ROOT_PASSWORD=${DB_PASSWORD}"
+      - "MYSQL_USER=${DB_USERNAME}"
+      - "MYSQL_DATABASE=${DB_NAME}"
+      - "MYSQL_PASSWORD=${DB_PASSWORD}"
+  web: 
+    container_name: campaign_go_api_2
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ".:/app"
+    depends_on:
+      db:
+        condition: service_healthy
+    links:
+    - "db:database"
